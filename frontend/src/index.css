@@ -87,6 +87,13 @@ button {
 /* Prevent textarea resize handles */
 textarea {
   resize: none;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Hide scrollbar for WebKit browsers */
+textarea::-webkit-scrollbar {
+  display: none;
 }
 
 /* Focus states */

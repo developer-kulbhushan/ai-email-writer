@@ -8,7 +8,7 @@ import { WelcomeMessage } from './components/WelcomeMessage';
 import { LoadingDots } from './components/LoadingDots';
 
 function App() {
-  const { messages, isLoading, error, sendMessage, clearChat } = useChat();
+  const { messages, isLoading, error, sendMessage, clearChat, streamingMessageId } = useChat();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -46,12 +46,13 @@ function App() {
                     message={message}
                     onSuggestedQuestionClick={sendMessage}
                     isLatest={index === messages.length - 1}
-                    isLoading={isLoading}
+                    isLoading={isLoading && !streamingMessageId}
+                    isStreaming={message.isStreaming || false}
                     isDarkMode={isDarkMode}
                   />
                 ))}
                 
-                {isLoading && (
+                {isLoading && !streamingMessageId && (
                   <div className="flex gap-3 md:gap-4">
                     <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center">
                       <div className="w-5 h-5 text-white flex items-center justify-center">

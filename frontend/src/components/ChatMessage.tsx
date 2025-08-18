@@ -9,6 +9,7 @@ interface ChatMessageProps {
   onSuggestedQuestionClick: (question: string) => void;
   isLatest: boolean;
   isLoading: boolean;
+  isStreaming: boolean;
   isDarkMode: boolean;
 }
 
@@ -17,6 +18,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   onSuggestedQuestionClick,
   isLatest,
   isLoading,
+  isStreaming,
   isDarkMode,
 }) => {
   const isUser = message.type === 'user';
@@ -55,13 +57,17 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
         {/* Email Preview and Suggestions for assistant messages */}
         {!isUser && message.emailData && (
           <div className="mt-3 md:mt-4">
-            <EmailPreview emailData={message.emailData} isDarkMode={isDarkMode} />
-            <SuggestedQuestions
+            <EmailPreview 
+              emailData={message.emailData} 
+              isDarkMode={isDarkMode} 
+              isStreaming={isStreaming}
+            />
+            {!isStreaming && <SuggestedQuestions
               questions={message.emailData.suggested_questions}
               onQuestionClick={onSuggestedQuestionClick}
               disabled={isLoading}
               isDarkMode={isDarkMode}
-            />
+            />}
           </div>
         )}
       </div>

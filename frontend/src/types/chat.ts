@@ -10,14 +10,10 @@ export interface Message {
   content: string;
   timestamp: Date;
   emailData?: ApiResponse;
+  isStreaming?: boolean;
 }
 
 export interface ApiError {
   message: string;
   status?: number;
-}
-
-export interface ResetResponse {
-  status: string;
-  message: string;
 }

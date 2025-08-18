@@ -5,9 +5,10 @@ import { ApiResponse } from '../types/chat';
 interface EmailPreviewProps {
   emailData: ApiResponse;
   isDarkMode: boolean;
+  isStreaming?: boolean;
 }
 
-export const EmailPreview: React.FC<EmailPreviewProps> = ({ emailData, isDarkMode }) => {
+export const EmailPreview: React.FC<EmailPreviewProps> = ({ emailData, isDarkMode, isStreaming = false }) => {
   const [copiedField, setCopiedField] = React.useState<string | null>(null);
 
   const copyToClipboard = async (text: string, field: string) => {
@@ -38,7 +39,7 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({ emailData, isDarkMod
         
         {/* Copy Toolbar */}
         <div className="ml-auto flex items-center gap-1 md:gap-2">
-          <button
+          {!isStreaming && <button
             onClick={() => copyToClipboard(emailData.subject, 'subject')}
             className={`flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1.5 text-xs md:text-sm rounded-lg transition-colors ${
               isDarkMode 
@@ -49,17 +50,18 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({ emailData, isDarkMod
             {copiedField === 'subject' ? <Check className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
             <span className="hidden sm:inline">{copiedField === 'subject' ? 'Copied!' : 'Copy Subject'}</span>
           </button>
-          
+          }
           <button
             onClick={() => copyToClipboard(emailData.email, 'email')}
-            className={`flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1.5 text-xs md:text-sm rounded-lg transition-colors ${
+            disabled={isStreaming}
+            className={`flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1.5 text-xs md:text-sm rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
               isDarkMode 
                 ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-700' 
                 : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
             }`}
           >
             {copiedField === 'email' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            <span className="hidden sm:inline">{copiedField === 'email' ? 'Copied!' : 'Copy Body'}</span>
+            <span className="hidden sm:inline">{isStreaming ? 'Writing...' : copiedField === 'email' ? 'Copied!' : 'Copy Body'}</span>
           </button>
         </div>
       </div>
@@ -75,8 +77,9 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({ emailData, isDarkMod
           isDarkMode 
             ? 'bg-gray-700/50 border-gray-600 text-gray-100' 
             : 'bg-white border-gray-200 text-gray-800'
-        }`}>
-          {emailData.subject}
+        } ${isStreaming && !emailData.subject ? 'animate-pulse' : ''}`}>
+          {emailData.subject || (isStreaming ? 'Generating subject...' : '')}
+          {isStreaming && emailData.subject && <span className="animate-pulse">|</span>}
         </div>
       </div>
 
@@ -91,8 +94,9 @@ export const EmailPreview: React.FC<EmailPreviewProps> = ({ emailData, isDarkMod
           isDarkMode 
             ? 'bg-gray-700/50 border-gray-600 text-gray-100' 
             : 'bg-white border-gray-200 text-gray-700'
-        }`}>
-          {emailData.email}
+        } ${isStreaming && !emailData.email ? 'animate-pulse' : ''}`}>
+          {emailData.email || (isStreaming ? 'Generating email content...' : '')}
+          {isStreaming && emailData.email && <span className="animate-pulse">|</span>}
         </div>
       </div>
     </div>

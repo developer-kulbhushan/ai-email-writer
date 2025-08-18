@@ -55,12 +55,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           onKeyPress={handleKeyPress}
           placeholder="Describe the email you'd like me to draft..."
           disabled={disabled}
-          className={`w-full px-3 md:px-4 py-2 md:py-3 pr-12 border rounded-xl md:rounded-2xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] md:min-h-[50px] max-h-32 text-sm md:text-base ${
+          className={`w-full px-3 md:px-4 py-2 md:py-3 pr-12 border rounded-xl md:rounded-2xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] md:min-h-[50px] max-h-32 text-sm md:text-base overflow-hidden ${
             isDarkMode 
               ? 'bg-gray-800 border-gray-600 text-gray-100 placeholder-gray-400' 
               : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
           }`}
           rows={1}
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         />
       </div>
       

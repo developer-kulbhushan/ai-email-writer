@@ -1,11 +1,12 @@
 import { useState, useCallback } from 'react';
 import { Message, ApiResponse } from '../types/chat';
-import { ApiService } from '../services/api';
+import { ApiService, StreamingCallback } from '../services/api';
 
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null);
 
   const sendMessage = useCallback(async (content: string) => {
     if (!content.trim()) return;
@@ -21,37 +22,84 @@ export const useChat = () => {
     setIsLoading(true);
     setError(null);
 
-    try {
-      const apiResponse = await ApiService.processMessage(content);
-      
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'assistant',
-        content: 'I\'ve drafted an email for you:',
-        timestamp: new Date(),
-        emailData: apiResponse,
-      };
+    // Create initial assistant message for streaming
+    const assistantMessageId = (Date.now() + 1).toString();
+    const initialAssistantMessage: Message = {
+      id: assistantMessageId,
+      type: 'assistant',
+      content: 'I\'m drafting your email...',
+      timestamp: new Date(),
+      isStreaming: true,
+      emailData: {
+        subject: '',
+        email: '',
+        suggested_questions: []
+      }
+    };
 
-      setMessages(prev => [...prev, assistantMessage]);
+    setMessages(prev => [...prev, initialAssistantMessage]);
+    setStreamingMessageId(assistantMessageId);
+
+    const streamingCallbacks: StreamingCallback = {
+      onSubjectUpdate: (subject: string) => {
+        setMessages(prev => prev.map(msg => 
+          msg.id === assistantMessageId 
+            ? { 
+                ...msg, 
+                emailData: { 
+                  ...msg.emailData!, 
+                  subject 
+                } 
+              }
+            : msg
+        ));
+      },
+      onEmailUpdate: (email: string) => {
+        setMessages(prev => prev.map(msg => 
+          msg.id === assistantMessageId 
+            ? { 
+                ...msg, 
+                emailData: { 
+                  ...msg.emailData!, 
+                  email 
+                } 
+              }
+            : msg
+        ));
+      },
+      onComplete: (apiResponse: ApiResponse) => {
+        setMessages(prev => prev.map(msg => 
+          msg.id === assistantMessageId 
+            ? { 
+                ...msg, 
+                content: 'I\'ve drafted an email for you:',
+                isStreaming: false,
+                emailData: apiResponse
+              }
+            : msg
+        ));
+        setStreamingMessageId(null);
+      }
+    };
+
+    try {
+      await ApiService.processMessage(content, streamingCallbacks);
     } catch (err) {
       setError('Failed to process your message. Please try again.');
+      setStreamingMessageId(null);
       console.error('Chat error:', err);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const clearChat = useCallback(async () => {
+  const clearChat = useCallback(() => {
+    // Call reset API endpoint
+    ApiService.resetChat();
+    
     setMessages([]);
     setError(null);
-
-    try {
-      await ApiService.resetClient(); // Call backend /reset
-    } catch (err) {
-      console.error('Failed to reset LLM client:', err);
-      setError('Failed to reset assistant. Please try again.');
-    }
-    
+    setStreamingMessageId(null);
   }, []);
 
   return {
@@ -60,5 +108,6 @@ export const useChat = () => {
     error,
     sendMessage,
     clearChat,
+    streamingMessageId,
   };
 };
