@@ -26,7 +26,7 @@ function App() {
         ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
         : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'
     }`}>
-      <div className="max-w-6xl mx-auto flex flex-col h-screen">
+      <div className="max-w-6xl mx-auto flex flex-col h-screen mobile-padding">
         <ChatHeader 
           onClearChat={clearChat} 
           messageCount={messages.length}
@@ -35,7 +35,7 @@ function App() {
         />
         
         <div className="flex-1 overflow-hidden flex flex-col">
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
             {messages.length === 0 ? (
               <WelcomeMessage onQuickStart={sendMessage} isDarkMode={isDarkMode} />
             ) : (
@@ -52,7 +52,7 @@ function App() {
                 ))}
                 
                 {isLoading && (
-                  <div className="flex gap-4">
+                  <div className="flex gap-3 md:gap-4">
                     <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center">
                       <div className="w-5 h-5 text-white flex items-center justify-center">
                         <LoadingDots />
@@ -92,7 +92,7 @@ function App() {
             isDarkMode 
               ? 'bg-gray-900/80 border-gray-700' 
               : 'bg-white/80 border-gray-200'
-          }`}>
+          } mobile-padding`}>
             <ChatInput onSendMessage={sendMessage} isLoading={isLoading} isDarkMode={isDarkMode} />
           </div>
         </div>

@@ -58,6 +58,22 @@
   background: var(--text-secondary);
 }
 
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .mobile-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+  
+  .mobile-gap-2 {
+    gap: 0.5rem;
+  }
+}
+
 /* Smooth animations for buttons */
 button {
   transition: all 0.2s ease;

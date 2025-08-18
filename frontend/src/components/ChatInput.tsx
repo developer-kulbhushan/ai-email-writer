@@ -46,7 +46,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-3 items-end">
+    <form onSubmit={handleSubmit} className="flex gap-2 md:gap-3 items-end">
       <div className="flex-1 relative">
         <textarea
           ref={textareaRef}
@@ -55,7 +55,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           onKeyPress={handleKeyPress}
           placeholder="Describe the email you'd like me to draft..."
           disabled={disabled}
-          className={`w-full px-4 py-3 pr-12 border rounded-2xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed min-h-[50px] max-h-32 ${
+          className={`w-full px-3 md:px-4 py-2 md:py-3 pr-12 border rounded-xl md:rounded-2xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] md:min-h-[50px] max-h-32 text-sm md:text-base ${
             isDarkMode 
               ? 'bg-gray-800 border-gray-600 text-gray-100 placeholder-gray-400' 
               : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
@@ -67,12 +67,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       <button
         type="submit"
         disabled={!message.trim() || isLoading || disabled}
-        className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white rounded-full flex items-center justify-center transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 disabled:transform-none"
+        className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white rounded-full flex items-center justify-center transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 disabled:transform-none"
       >
         {isLoading ? (
-          <Loader2 className="w-5 h-5 animate-spin" />
+          <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
         ) : (
-          <Send className="w-5 h-5" />
+          <Send className="w-4 h-4 md:w-5 md:h-5" />
         )}
       </button>
     </form>
