@@ -4,6 +4,11 @@ export interface ApiResponse {
   suggested_questions: string[];
 }
 
+export interface ApiRequest {
+  message: string;
+  user_id: string;
+}
+
 export interface Message {
   id: string;
   type: 'user' | 'assistant';

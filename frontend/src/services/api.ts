@@ -1,6 +1,16 @@
-import { ApiResponse, ApiError } from '../types/chat';
+import { ApiResponse, ApiError, ApiRequest } from '../types/chat';
 
 const API_BASE_URL = import.meta.env.VITE_API_HOSTNAME || 'https://api.example.com';
+
+// Generate a unique user ID and store it in localStorage
+const getUserId = (): string => {
+  let userId = localStorage.getItem('chatbot_user_id');
+  if (!userId) {
+    userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('chatbot_user_id', userId);
+  }
+  return userId;
+};
 
 export interface StreamingCallback {
   onSubjectUpdate?: (subject: string) => void;
@@ -10,13 +20,19 @@ export interface StreamingCallback {
 
 export class ApiService {
   static async processMessage(message: string, callbacks?: StreamingCallback): Promise<ApiResponse> {
+    const userId = getUserId();
+    const requestPayload: ApiRequest = {
+      message,
+      user_id: userId
+    };
+
     try {
       const response = await fetch(`${API_BASE_URL}/process`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify(requestPayload),
       });
 
       if (!response.ok) {
@@ -90,12 +106,15 @@ export class ApiService {
   }
 
   static async resetChat(): Promise<void> {
+    const userId = getUserId();
+    
     try {
       const response = await fetch(`${API_BASE_URL}/reset`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify(userId),
       });
 
       if (!response.ok) {
